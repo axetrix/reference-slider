@@ -1,0 +1,32 @@
+PINTEREST SLIDER 1.2.0 — PUBLICATION MATERIALS
+
+Upload package: dist/pinterest-slider-1.2.0.zip
+Extension icon: extension/icons/icon-128.png
+Small promo image: store/promo-440x280.png (440 × 280)
+Screenshots: store/screenshot-*.png (1280 × 800)
+Listing copy and permission explanations: store/listing.txt
+Privacy policy page: store/privacy.html
+
+WHAT IS PREPARED
+Manifest V3 package with a root manifest.json and local icons/scripts.
+Local collections, viewer, responsive layout and keyboard/gesture tests.
+Original icon, promotional image and actual UI screenshots using original demo artwork.
+Local Git repository prepared for GitHub. No remote repository or store submission created.
+
+REMAINING BEFORE SUBMISSION
+1. Test version 1.2.0 on live Pinterest while signed in: feed, board, search, open pin, loading more pins, image details/source links, and local collections after a real browser restart. Automated tests use controlled pages and mocked Chrome storage, so they do not verify Pinterest's current live HTML or an installed extension service worker.
+2. Register/sign into the Chrome Web Store developer dashboard and complete the account's registration, payment and verification requirements.
+3. Publish store/privacy.html at an accessible HTTPS URL. GitHub Pages is one option. The source repository does not need to be public for Chrome Web Store publication.
+4. Set your actual developer/support contact information in the dashboard. The privacy policy refers users to that contact.
+5. Upload the ZIP, icon, promo and screenshots. Paste listing text and permission justifications.
+6. Complete the privacy/data-use declarations to match the code and privacy policy.
+7. Review the store preview and submit for review when ready. Approval is determined by the store.
+
+GITHUB
+Create an empty repository (without an extra README) and choose Public if you want public source. Add its exact URL as origin, then push main. dist/ is intentionally ignored; upload the ZIP as a GitHub Release attachment if desired. Source code is released under the MIT License (LICENSE). The Lucide third-party license is already included.
+
+SOURCES
+https://developer.chrome.com/docs/webstore/prepare
+https://developer.chrome.com/docs/webstore/images
+https://developer.chrome.com/docs/webstore/register
+https://developer.chrome.com/docs/webstore/program-policies/user-data-faq

@@ -1,0 +1,14 @@
+{
+  "name": "pinterest-slider",
+  "version": "1.2.0",
+  "private": true,
+  "license": "MIT",
+  "description": "A focused Pinterest image viewer with local reference collections.",
+  "scripts": {
+    "build": "node scripts/build-release.cjs",
+    "test": "node tests/viewer.cjs",
+    "screenshots": "node scripts/store-screenshots.cjs",
+    "check": "node --check extension/content.js && node --check extension/background.js && node --check extension/popup.js"
+  },
+  "devDependencies": { "jszip": "3.10.1", "playwright": "1.62.1", "sharp": "0.35.4" }
+}

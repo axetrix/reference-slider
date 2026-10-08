@@ -1,0 +1,43 @@
+TITLE
+Pinterest Slider
+
+SUMMARY
+Browse Pinterest images with swipes, zoom and project collections.
+
+DESCRIPTION
+A focused image viewer for Pinterest, with simple tools for collecting references for your next project.
+
+Open Slider from a feed, search, board or an already open pin. Browse with arrow keys, mouse swipes or touch gestures. Zoom into details, drag around enlarged images, and use Fit to width for long infographics and screenshots.
+
+Save useful pins into named project collections. Revisit just those references in a separate viewer, search your collections, rename them, and remove references you no longer need. Collections are stored locally in your Chrome profile.
+
+Features:
+• Large image viewer with circular controls and Lucide icons.
+• Keyboard navigation, mouse dragging and touch pinch zoom.
+• Original-resolution image requests with fallback to available Pinterest sizes.
+• Named reference collections with search and duplicate prevention.
+• Image details and source links when available from Pinterest.
+• No developer-hosted server, advertising or analytics.
+
+Requires an accessible Pinterest page and an internet connection to load images. It does not bypass Pinterest sign-in. Collections do not sync between devices and image files are not stored offline. Video playback is not supported.
+
+Independent project. Not affiliated with or endorsed by Pinterest.
+Store screenshots show the actual interface with original illustrative demo artwork.
+
+SINGLE PURPOSE
+Help users view Pinterest images and organize them into local reference collections.
+
+STORAGE PERMISSION JUSTIFICATION
+Stores user-created collection names and saved reference metadata locally, so users can revisit their collections after restarting Chrome.
+
+HOST ACCESS JUSTIFICATION
+Content scripts run only on the supported Pinterest domains to read visible pin images and metadata and to add the viewer. Access to https://www.pinterest.com/* also lets the extension's collection page request a selected pin's details when the user opens Image details.
+
+REMOTE CODE
+No remote executable code. All JavaScript and SVG icons are included in the package. Pinterest page responses are parsed as data and are not executed.
+
+DATA DISCLOSURE NOTES
+The extension accesses website content (pin images, URLs, titles, descriptions and source links) and stores selected references locally. No analytics or developer data collection endpoint exists. Explain local handling transparently in the dashboard; do not claim that the extension never accesses data. Confirm the current dashboard categories and Limited Use declarations against privacy.html before submission.
+
+CATEGORY SUGGESTION
+Workflow & Planning, or the nearest available productivity/design category in the dashboard.
