@@ -2,10 +2,12 @@ TITLE
 Pinterest Slider
 
 SUMMARY
-Browse Pinterest images with swipes, zoom and project collections.
+Image viewer for Pinterest websites only: swipe, zoom and save references to local project collections.
 
 DESCRIPTION
 A focused image viewer for Pinterest, with simple tools for collecting references for your next project.
+
+Works only on supported Pinterest websites in Chrome. It does not add a viewer to other websites and does not run inside the Pinterest mobile app. Saved collections can be opened from the extension itself.
 
 Open Slider from a feed, search, board or an already open pin. Browse with arrow keys, mouse swipes or touch gestures. Zoom into details, drag around enlarged images, and use Fit to width for long infographics and screenshots.
 

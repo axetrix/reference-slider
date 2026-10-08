@@ -11,7 +11,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "description": "Browse Pinterest images with swipes, zoom and project collections.",
+  "description": "Image viewer for Pinterest websites only: swipe, zoom and save references to local project collections.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Pinterest Slider",

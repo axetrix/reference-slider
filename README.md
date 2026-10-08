@@ -4,6 +4,8 @@
 
 ![Image viewer](store/screenshot-viewer.png)
 
+Works only on supported Pinterest websites in Chrome. It does not add a viewer to other websites or run inside the Pinterest mobile app. Saved collections can be opened from the extension itself.
+
 Browse references without repeatedly opening and closing pins. Zoom into small details, read long images, and save useful pins into collections for a project.
 
 ## Features
