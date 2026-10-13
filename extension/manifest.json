@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Pinterest Slider",
-  "version": "1.2.0",
+  "name": "Reference Slider",
+  "version": "1.2.1",
   "permissions": [
     "storage"
   ],
@@ -14,7 +14,7 @@
   "description": "Image viewer for Pinterest websites only: swipe, zoom and save references to local project collections.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Pinterest Slider",
+    "default_title": "Reference Slider",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"

@@ -1,5 +1,5 @@
 TITLE
-Pinterest Slider
+Reference Slider
 
 SUMMARY
 Image viewer for Pinterest websites only: swipe, zoom and save references to local project collections.

@@ -1,5 +1,5 @@
-<p align="center"><img src="extension/icons/icon-128.png" width="96" alt="Pinterest Slider icon"></p>
-<h1 align="center">Pinterest Slider</h1>
+<p align="center"><img src="extension/icons/icon-128.png" width="96" alt="Reference Slider icon"></p>
+<h1 align="center">Reference Slider</h1>
 <p align="center">A focused Pinterest image viewer with local project collections.</p>
 
 ![Image viewer](store/screenshot-viewer.png)
@@ -73,7 +73,7 @@ The build generates PNG icons and a ZIP in `dist/`, with `manifest.json` at the 
 
 ## Publication status
 
-Version 1.2.0 is prepared for local testing and submission preparation. It has not been submitted to the Chrome Web Store. See [publication instructions](store/PUBLISHING.txt) and [listing copy](store/listing.txt). Live Pinterest and installed-extension checks are still required before submitting; automated tests use controlled fixtures.
+Version 1.2.1 is prepared for local testing and submission preparation. It has not been submitted to the Chrome Web Store. See [publication instructions](store/PUBLISHING.txt) and [listing copy](store/listing.txt). Live Pinterest and installed-extension checks are still required before submitting; automated tests use controlled fixtures.
 
 Supported Pinterest domains: .com, .ru, .co.uk, .de, .fr, .ca, .it, .es, .com.au and .jp. Videos show an available image cover; video playback is not supported. Pinterest markup changes may affect extraction. Original resolution and source metadata are not available for every pin.
 

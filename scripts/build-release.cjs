@@ -20,7 +20,7 @@ const JSZip = dependency('jszip');
   add('extension');
   if (!zip.file('manifest.json')) throw new Error('Manifest missing from ZIP root');
   for (const p of Object.values(manifest.icons)) if (!zip.file(p)) throw new Error('Icon missing: ' + p);
-  const out = `dist/pinterest-slider-${manifest.version}.zip`;
+  const out = `dist/reference-slider-${manifest.version}.zip`;
   fs.writeFileSync(out, await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' }));
   console.log('Built', out);
 })().catch(e => { console.error(e); process.exitCode = 1; });
