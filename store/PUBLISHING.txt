@@ -5,8 +5,8 @@ Extension icon: extension/icons/icon-128.png
 Small promo image: store/promo-440x280.png (440 × 280)
 Screenshots: store/screenshot-*.png (1280 × 800)
 Listing copy and permission explanations: store/listing.txt
-Privacy policy URL: https://axetrix.github.io/reference-slider/
-Privacy policy source: docs/index.html (keep identical to store/privacy.html)
+Privacy policy URL: https://axetrix.github.io/reference-slider/privacy.html
+Privacy policy source: docs/privacy.html (keep identical to store/privacy.html)
 
 WHAT IS PREPARED
 Manifest V3 package with a root manifest.json and local icons/scripts.
@@ -18,7 +18,7 @@ The previous package was submitted for review; this renamed package must be uplo
 REMAINING BEFORE SUBMISSION
 1. Test version 1.2.1 on live Pinterest while signed in: feed, board, search, open pin, loading more pins, image details/source links, and local collections after a real browser restart. Automated tests use controlled pages and mocked Chrome storage, so they do not verify Pinterest's current live HTML or an installed extension service worker.
 2. Register/sign into the Chrome Web Store developer dashboard and complete the account's registration, payment and verification requirements.
-3. Use https://axetrix.github.io/reference-slider/ as the Privacy policy URL.
+3. Use https://axetrix.github.io/reference-slider/privacy.html as the Privacy policy URL.
 4. Set your actual developer/support contact information in the dashboard. The privacy policy refers users to that contact.
 5. Upload the ZIP, icon, promo and screenshots. Paste listing text and permission justifications.
 6. Complete the privacy/data-use declarations to match the code and privacy policy.

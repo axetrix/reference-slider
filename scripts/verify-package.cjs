@@ -9,7 +9,7 @@ for (const file of ['extension/popup.html', 'extension/library.html', 'README.md
   assert.ok(text.includes('Reference Slider'), 'Missing current branding: ' + file);
   assert.ok(!/Pinterest Slider/i.test(text), 'Outdated branding: ' + file);
 }
-assert.equal(fs.readFileSync('docs/index.html', 'utf8'), fs.readFileSync('store/privacy.html', 'utf8'), 'Published privacy policy must match store copy');
+assert.equal(fs.readFileSync('docs/privacy.html', 'utf8'), fs.readFileSync('store/privacy.html', 'utf8'), 'Published privacy policy must match store copy');
 assert.ok(manifest.description.length <= 132);
 const paths = [manifest.background.service_worker, manifest.action.default_popup, ...Object.values(manifest.icons), ...Object.values(manifest.action.default_icon), ...manifest.content_scripts.flatMap(c => c.js)];
 for (const value of paths) assert.ok(fs.existsSync('extension/' + value), 'Missing: ' + value);
