@@ -13,9 +13,9 @@ Manifest V3 package with a root manifest.json and local icons/scripts.
 Local collections, viewer, responsive layout and keyboard/gesture tests.
 Original icon, promotional image and actual UI screenshots using original demo artwork.
 Public GitHub repository: https://github.com/axetrix/reference-slider
-The previous package was submitted for review; this renamed package must be uploaded in the dashboard.
+Published on Chrome Web Store: https://chromewebstore.google.com/detail/reference-slider/ibjhkailjhfgdkojgeddkednjmicidkf
 
-REMAINING BEFORE SUBMISSION
+CHECKLIST FOR FUTURE UPDATES
 1. Test version 1.2.1 on live Pinterest while signed in: feed, board, search, open pin, loading more pins, image details/source links, and local collections after a real browser restart. Automated tests use controlled pages and mocked Chrome storage, so they do not verify Pinterest's current live HTML or an installed extension service worker.
 2. Register/sign into the Chrome Web Store developer dashboard and complete the account's registration, payment and verification requirements.
 3. Use https://axetrix.github.io/reference-slider/privacy.html as the Privacy policy URL.

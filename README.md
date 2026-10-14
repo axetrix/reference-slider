@@ -73,7 +73,7 @@ The build generates PNG icons and a ZIP in `dist/`, with `manifest.json` at the 
 
 ## Publication status
 
-Version 1.2.1 is prepared for local testing and submission preparation. It has not been submitted to the Chrome Web Store. See [publication instructions](store/PUBLISHING.txt) and [listing copy](store/listing.txt). Live Pinterest and installed-extension checks are still required before submitting; automated tests use controlled fixtures.
+Reference Slider is publicly available on the [Chrome Web Store](https://chromewebstore.google.com/detail/reference-slider/ibjhkailjhfgdkojgeddkednjmicidkf). See [publication instructions](store/PUBLISHING.txt) and [listing copy](store/listing.txt). Automated tests use controlled fixtures; they do not replace live Pinterest and installed-extension checks.
 
 Supported Pinterest domains: .com, .ru, .co.uk, .de, .fr, .ca, .it, .es, .com.au and .jp. Videos show an available image cover; video playback is not supported. Pinterest markup changes may affect extraction. Original resolution and source metadata are not available for every pin.
 
