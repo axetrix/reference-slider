@@ -6,13 +6,13 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
   try {
     fs.mkdirSync('store', { recursive: true });
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    const art = fs.readFileSync('assets/demo-art.svg', 'utf8');
-    await page.route('https://i.pinimg.com/**', route => route.fulfill({ contentType: 'image/svg+xml', body: art }));
+    const art = fs.readFileSync('assets/demo-autumn.png');
+    await page.route('https://i.pinimg.com/**', route => route.fulfill({ contentType: 'image/png', body: art }));
     await page.route('https://www.pinterest.com/', route => route.fulfill({ contentType: 'text/html', body: '<html><body></body></html>' }));
     await page.goto('https://www.pinterest.com/');
-    await page.setContent('<a href="/pin/500/"><img width="240" src="https://i.pinimg.com/736x/500.jpg" alt="Alpine palette — original demo illustration"></a><a href="/pin/501/"><img width="240" src="https://i.pinimg.com/736x/501.jpg" alt="Landscape study"></a>');
+    await page.setContent('<a href="/pin/500/"><img width="240" src="https://i.pinimg.com/736x/500.jpg" alt="Autumn colors — blurred demo image"></a><a href="/pin/501/"><img width="240" src="https://i.pinimg.com/736x/501.jpg" alt="Autumn study"></a>');
     await page.evaluate(() => {
-      const pin = { id: '500', src: 'https://i.pinimg.com/736x/500.jpg', url: 'https://www.pinterest.com/pin/500/', title: 'Alpine palette', description: 'Original demo artwork used to showcase the viewer.', metadataLoaded: true };
+      const pin = { id: '500', src: 'https://i.pinimg.com/736x/500.jpg', url: 'https://www.pinterest.com/pin/500/', title: 'Autumn colors', description: 'Generated, blurred demo image used to showcase the viewer.', metadataLoaded: true };
       window.demoStore = { pinterestSliderCollections: [
         { id: 'a', name: 'Brand direction', pins: [pin] }, { id: 'b', name: 'Interior moodboard', pins: [pin] }, { id: 'c', name: 'Weekend inspiration', pins: [pin] }
       ] };

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Reference Slider",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "permissions": [
     "storage"
   ],

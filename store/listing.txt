@@ -24,7 +24,7 @@ Features:
 Requires an accessible Pinterest page and an internet connection to load images. It does not bypass Pinterest sign-in. Collections do not sync between devices and image files are not stored offline. Video playback is not supported.
 
 Independent project. Not affiliated with or endorsed by Pinterest.
-Store screenshots show the actual interface with original illustrative demo artwork.
+Store screenshots show the actual interface with an AI-generated, blurred demo image.
 
 SINGLE PURPOSE
 Help users view Pinterest images and organize them into local reference collections.
