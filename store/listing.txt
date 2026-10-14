@@ -2,7 +2,7 @@ TITLE
 Reference Slider
 
 SUMMARY
-Image viewer for Pinterest websites only: swipe, zoom and save references to local project collections.
+Image viewer for supported websites: swipe, zoom and save references to local project collections.
 
 DESCRIPTION
 A focused image viewer for Pinterest, with simple tools for collecting references for your next project.

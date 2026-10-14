@@ -4,6 +4,8 @@ const manifest = JSON.parse(fs.readFileSync('extension/manifest.json'));
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.name, 'Reference Slider');
 assert.equal(manifest.action.default_title, 'Reference Slider');
+const viewerSource = fs.readFileSync('extension/content.js', 'utf8');
+assert.ok(!/Pinterest(?:\s+|<[^>]+>)+Slider/i.test(viewerSource), 'Outdated viewer branding across HTML tags');
 for (const file of ['extension/popup.html', 'extension/library.html', 'README.md', 'store/listing.txt', 'store/privacy.html', 'docs/index.html']) {
   const text = fs.readFileSync(file, 'utf8');
   assert.ok(text.includes('Reference Slider'), 'Missing current branding: ' + file);

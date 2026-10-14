@@ -1,6 +1,6 @@
 {
   "name": "reference-slider",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "license": "MIT",
   "description": "A focused Pinterest image viewer with local reference collections.",

@@ -23,9 +23,9 @@
 @media(prefers-reduced-motion:reduce){button,.tool,a.tool{transition:none}}
 </style>
     <button class="launch" type="button">Open Slider</button>
-    <section class="viewer" hidden role="dialog" aria-modal="true" aria-label="Pinterest image viewer" tabindex="-1">
+    <section class="viewer" hidden role="dialog" aria-modal="true" aria-label="Reference Slider image viewer" tabindex="-1">
       <header>
-        <strong class="brand">Pinterest <span>Slider</span></strong>
+        <strong class="brand">Reference <span>Slider</span></strong>
         <div class="controls" role="toolbar" aria-label="Image actions">
           ${tool('feed', 'ArrowLeft', 'Back to feed', 'hidden')}
           ${tool('library-open', 'PanelsTopLeft', 'Collections')}
@@ -40,7 +40,7 @@
         <span class="collection-name" hidden></span>
       </header>
       <div class="stage">
-        <aside class="info-panel" hidden aria-label="Image details"><div class="panel-top"><h2>Image details</h2>${tool('info-close','X','Close details')}</div><h3 class="info-title"></h3><p class="info-description"></p><p class="info-resolution"></p><p class="info-status" role="status"></p><a class="info-source" target="_blank" rel="noopener noreferrer" hidden></a><a class="info-pin" target="_blank" rel="noopener noreferrer">Open on Pinterest</a></aside>
+        <aside class="info-panel" hidden aria-label="Image details"><div class="panel-top"><h2>Image details</h2>${tool('info-close','X','Close details')}</div><h3 class="info-title"></h3><p class="info-description"></p><p class="info-resolution"></p><p class="info-status" role="status"></p><a class="info-source" target="_blank" rel="noopener noreferrer" hidden></a><a class="info-pin" target="_blank" rel="noopener noreferrer">Open original pin</a></aside>
         <section class="library-panel" hidden aria-label="My collections"><div class="library-content"><div class="library-top"><div><h2>My collections</h2><p class="library-subtitle">References for your next project.</p></div>${tool('library-back','ArrowLeft','Back to viewer')}</div><div class="library-tools"><label class="search-box">${icon('Search')}<input class="collection-search" type="search" placeholder="Search collections" aria-label="Search collections"></label><form class="create-form"><input maxlength="100" aria-label="Collection name" placeholder="New collection" required><button class="tool" type="submit" title="Create collection" aria-label="Create collection">${icon('Plus')}</button></form></div><p class="library-status" role="status"></p><div class="collection-list"></div></div></section>
         <p class="message" role="status"></p><img class="photo" draggable="false" hidden>
         ${tool('prev','ChevronLeft','Previous image')}${tool('next','ChevronRight','Next image')}
@@ -246,7 +246,7 @@
       $('.info-source').href = source;
       $('.info-source').textContent = `Visit source: ${new URL(source).hostname}`;
     } else $('.info-source').removeAttribute('href');
-    $('.info-status').textContent = source ? '' : (pin.metadataLoaded ? 'No external link is listed for this pin.' : 'Loading details from Pinterest…');
+    $('.info-status').textContent = source ? '' : (pin.metadataLoaded ? 'No external link is listed for this pin.' : 'Loading image details…');
   }
   async function showInfo() {
     const pin = pins[index]; if (!pin) return;
@@ -280,7 +280,7 @@
         if (description) pin.description = description;
         const link = doc.querySelector('[data-test-id="visit-site-button"] a[href],a[data-test-id="pin-link"][href],a[data-test-id="visit-site-button"][href]');
         pin.source = externalUrl(link?.getAttribute('href'));
-        if (!title && !description && !pin.source) throw new Error('Pinterest did not return pin details.');
+        if (!title && !description && !pin.source) throw new Error('The source did not return pin details.');
       }
       pin.metadataLoaded = true;
       if (pins[index] === pin) { $('.caption').textContent = pin.title; updateInfo(); }
@@ -288,7 +288,7 @@
         await collectionAction('metadata', { pin });
       }
     } catch {
-      if (pins[index] === pin) $('.info-status').textContent = 'Could not load the source. Open the pin on Pinterest to check its link.';
+      if (pins[index] === pin) $('.info-status').textContent = 'Could not load the source. Open the original pin to check its link.';
     }
   }
   $('.info-open').onclick = showInfo;
@@ -320,7 +320,7 @@
     const body = document.querySelector('[data-test-id="closeup-body"], [data-test-id="pin-closeup"]');
     const source = body?.querySelector('[data-test-id="visit-site-button"] a[href],a[data-test-id="visit-site-button"],a[data-test-id="pin-link"]');
     return { id, src, url: `${location.origin}/pin/${id}/`,
-      title: body?.querySelector('h1')?.textContent || img?.alt || (metaMatches ? document.querySelector('meta[property="og:title"]')?.content : '') || 'Pinterest image',
+      title: body?.querySelector('h1')?.textContent || img?.alt || (metaMatches ? document.querySelector('meta[property="og:title"]')?.content : '') || 'Reference image',
       description: body?.querySelector('[data-test-id="pin-description"]')?.textContent || '', source: externalUrl(source?.href) };
   }
   function collect() {
@@ -341,7 +341,7 @@
       seen.add(match[1]);
       const card = anchor.closest('[data-test-id="pin"],[data-test-id="pinWrapper"],[data-grid-item]');
       const sourceAnchor = card?.querySelector('a[data-test-id="pin-link"],a[data-test-id="visit-site-button"]');
-      pins.push({ id: match[1], src, title: img.alt || 'Pinterest image', url: anchor.href,
+      pins.push({ id: match[1], src, title: img.alt || 'Reference image', url: anchor.href,
         description: card?.querySelector('[data-test-id="pin-description"]')?.textContent || '', source: externalUrl(sourceAnchor?.href) });
     }
   }
@@ -396,7 +396,7 @@
     $('.count').textContent = pin ? `${index + 1} / ${pins.length}` : '';
     $('.caption').textContent = pin?.title || '';
     $('.link').hidden = !pin;
-    if (!pin) { photo.hidden = true; $('.message').textContent = activeCollection ? 'This collection is empty. Return to the feed and save some references.' : 'No images yet. Open a Pinterest feed, search, board or pin and wait for it to load.'; return; }
+    if (!pin) { photo.hidden = true; $('.message').textContent = activeCollection ? 'This collection is empty. Return to the feed and save some references.' : 'No images yet. Open a supported feed, search, board or pin and wait for it to load.'; return; }
     $('.link').href = pin.url;
     photo.hidden = true;
     $('.message').textContent = 'Loading image…';

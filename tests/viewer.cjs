@@ -33,6 +33,8 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     }
     await installStorage();
     await page.addScriptTag({ path: path.resolve(__dirname, '../extension/content.js') });
+    assert.equal(await page.locator('.brand').textContent(), 'Reference Slider');
+    assert.equal(await page.locator('.viewer').getAttribute('aria-label'), 'Reference Slider image viewer');
     await page.locator('.launch:not(.launch-library)').click();
     await page.locator('header .count').waitFor();
     assert.equal(await page.locator('header .count').textContent(), '1 / 3');
@@ -212,7 +214,7 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     await popup.locator('#library').hover();
     await popup.screenshot({ path: artifact('pinterest-slider-popup.png') });
     await popup.locator('#open').click();
-    assert.match(await popup.locator('#status').textContent(), /Open Pinterest/);
+    assert.match(await popup.locator('#status').textContent(), /Open a supported website/);
     await popup.close();
     console.log('PASS: custom keyboard menu, mobile menu bounds, collection search, responsive 320/390px controls, keyboard Space activation, slow press feedback, reduced motion, open pin detail priority, single English launcher, button shape, persistent task collections, duplicate prevention, saved-only viewer, remove, concurrent saves, zoom, pan, long image scrolling, pinch, quality fallback, collection, keyboard, mouse swipe, close, focus trap, feed pagination, empty state');
   } finally { await browser.close(); }
