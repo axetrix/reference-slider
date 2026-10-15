@@ -16,7 +16,7 @@ Save useful pins into named project collections. Revisit just those references i
 Features:
 • Large image viewer with circular controls and Lucide icons.
 • Keyboard navigation, mouse dragging and touch pinch zoom.
-• Original-resolution image requests with fallback to available Pinterest sizes.
+• Screen-sized images by default; original resolution loads automatically when you zoom in.
 • Named reference collections with search and duplicate prevention.
 • Image details and source links when available from Pinterest.
 • No developer-hosted server, advertising or analytics.

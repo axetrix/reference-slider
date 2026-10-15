@@ -12,7 +12,7 @@
   function tool(cls, name, label, extra = '') { return '<button class="tool ' + cls + '" type="button" aria-label="' + label + '" title="' + label + '" ' + extra + '>' + icon(name) + '</button>'; }
   root.innerHTML = `
     <style>:host{all:initial;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;color:#f5f5f7;color-scheme:dark}*{box-sizing:border-box}button,input,a{font:inherit}button{cursor:pointer;border:0;color:inherit}button,a{-webkit-tap-highlight-color:transparent}button:focus,a:focus{outline:none}.viewer:focus{outline:none}.viewer.keyboard-focus button:focus,.viewer.keyboard-focus a:focus,input:focus-visible{outline:2px solid #92bdff;outline-offset:3px}[hidden]{display:none!important}
-.launch{position:fixed;bottom:24px;right:24px;z-index:2147483646;background:#e60023;border-radius:12px;padding:15px 23px;font-weight:600;font-size:15px;box-shadow:0 4px 24px #0003;transition:scale .15s ease-out}button:active,a.tool:active{scale:.96}button:disabled{cursor:default;opacity:.3}button:disabled:active{scale:1}
+.launch{position:fixed;bottom:24px;right:24px;z-index:2147483646;background:#a32d46;border-radius:12px;padding:15px 23px;font-weight:600;font-size:15px;box-shadow:0 4px 24px #0003;transition:scale .15s ease-out}button:active,a.tool:active{scale:.96}button:disabled{cursor:default;opacity:.3}button:disabled:active{scale:1}
 .viewer{position:fixed;inset:0;z-index:2147483647;background:#131416;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:18px 24px;gap:18px}header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:16px;z-index:6}.brand{font-size:14px;letter-spacing:-.25px;white-space:nowrap;font-weight:600}.brand span{font-weight:400;color:#96989f}.close{justify-self:end}.controls,.zoom{display:flex;align-items:center;justify-content:center;gap:6px;max-width:100%;padding:6px;border-radius:32px;background:#292a2ed9;box-shadow:0 1px 0 #ffffff0c inset,0 8px 24px #0002;backdrop-filter:blur(18px)}.controls{backdrop-filter:none}.tool{width:44px;height:44px;min-width:44px;flex-shrink:0;padding:0;border:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#d9dbe1;text-decoration:none;transition:background-color .15s ease-out,color .15s ease-out,scale .15s ease-out}.tool svg{display:block;pointer-events:none}.tool:hover:not(:disabled){background:#ffffff12;color:white}.tool:focus-visible{outline-offset:1px}.close,.prev,.next{background:#2b2c30d9;box-shadow:0 1px 0 #ffffff0a inset}.close:hover,.prev:hover,.next:hover{background:#3a3c42}.save.saved:disabled{opacity:1;color:#90b9ff;background:#397adf20}.remove{color:#ef9b9b}.toolbar-divider{height:20px;width:1px;background:#ffffff16;margin:0 3px;flex-shrink:0}.count,.zoom-value{font-variant-numeric:tabular-nums;font-size:12px;color:#a8abb3;white-space:nowrap;min-width:46px;text-align:center}.count{padding:0 8px}
 .picker{position:relative;min-width:0}.destination{display:flex;gap:8px;align-items:center;background:transparent;color:#e5e6e9;border-radius:22px;padding:0 12px;height:44px;max-width:200px;font-size:13px}.destination:hover,.destination[aria-expanded=true]{background:#ffffff10}.destination>svg:first-child{width:18px;flex-shrink:0}.destination>svg:last-child{width:14px;flex-shrink:0;color:#9599a1}.destination-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.collection-menu{position:absolute;top:calc(100% + 12px);left:0;width:280px;max-width:calc(100vw - 32px);max-height:min(420px,60vh);overflow:auto;overscroll-behavior:contain;padding:6px;border-radius:16px;background:#2c2d32;box-shadow:0 0 0 1px #ffffff12,0 12px 50px #0007}.menu-heading{padding:9px 10px;font-size:11px;font-weight:600;color:#8f939c;text-transform:uppercase;letter-spacing:.5px}.menu-item{width:100%;min-height:44px;display:flex;align-items:center;gap:10px;text-align:left;background:transparent;border-radius:10px;padding:9px 10px;font-size:13px}.menu-item:hover,.menu-item:focus-visible{background:#ffffff10}.menu-item[aria-checked=true]{background:#3e74bd30;color:#d0e2ff}.menu-item svg{width:18px;height:18px;flex-shrink:0}.menu-item .menu-label{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.menu-count{font-size:11px;color:#9da1aa;font-variant-numeric:tabular-nums}.menu-create{margin-top:5px;border-top:1px solid #ffffff10;border-radius:0 0 10px 10px}
 .stage{position:relative;display:grid;place-items:center;min-height:0;overflow:hidden;touch-action:none;user-select:none}.photo{position:absolute;object-fit:contain;transform-origin:center;outline:1px solid #ffffff1a;border-radius:10px;min-width:0;min-height:0}.message{position:absolute;text-align:center;color:#aaaeb6;max-width:min(340px,80%);line-height:1.6;font-size:14px;pointer-events:none}.prev,.next{position:absolute;top:calc(50% - 24px);z-index:1;width:48px;height:48px}.prev{left:4px}.next{right:4px}.stage.zoomed{cursor:grab}.stage.dragging{cursor:grabbing}footer{display:flex;justify-content:center;align-items:center}.zoom{padding:6px}.stage:has(.library-panel:not([hidden])),.stage:has(.info-panel:not([hidden])){touch-action:pan-y}
@@ -69,7 +69,7 @@
     const selected = collections.find(c => c.id === selectedCollection);
     $('.destination-name').textContent = selected?.name || 'Collection';
     $('.destination').title = selected ? `Save to: ${selected.name}` : 'Choose a collection';
-    renderCollectionMenu();
+    if (!$('.collection-menu').hidden) renderCollectionMenu();
     const saved = selected?.pins.some(p => p.id === pins[index]?.id);
     $('.save').innerHTML = icon(saved ? 'BookmarkCheck' : 'Bookmark');
     $('.save').setAttribute('aria-label', saved ? 'Reference saved' : 'Save reference');
@@ -188,6 +188,7 @@
     finally { button.disabled = false; }
   };
   $('.save').onclick = async () => {
+    await loadCollections();
     if (!selectedCollection) { showLibrary(); return; }
     busy = true; updateCollectionControls();
     try { await collectionAction('save', { id: selectedCollection, pin: pins[index] }); }
@@ -204,8 +205,15 @@
     } catch (error) { storageError = error.message; showLibrary(); }
     finally { busy = false; updateCollectionControls(); }
   };
-  const collectionsReady = collectionAction('get').catch(error => { storageError = error.message; });
-  chrome.storage?.onChanged.addListener((changes, area) => {
+  // Collections load on first open, so Pinterest tabs where the viewer is never
+  // used neither hold a copy nor receive every storage change.
+  let collectionsReady = null, watchingStorage = false;
+  function loadCollections() {
+    if (!watchingStorage) { watchingStorage = true; chrome.storage?.onChanged.addListener(storageChanged); }
+    collectionsReady ||= collectionAction('get').catch(error => { storageError = error.message; collectionsReady = null; });
+    return collectionsReady;
+  }
+  function storageChanged(changes, area) {
     if (area !== 'local' || !changes.pinterestSliderCollections) return;
     collections = changes.pinterestSliderCollections.newValue || [];
     if (activeCollection) {
@@ -219,11 +227,27 @@
       }
     }
     updateCollectionControls(); if (!$('.library-panel').hidden) renderLibrary();
-  });
-  let imageCandidates = [], candidateIndex = 0;
+  }
+  let imageCandidates = [], candidateIndex = 0, upgrade = null, keepView = false;
+  const size = /\/(?:\d+x(?:\d+)?(?:_[^/]+)?|originals)\//;
+  // Start with a screen-sized copy: originals can decode to 100+ MB each,
+  // so they are requested only once zooming needs more pixels (see sharpen).
   function sources(src) {
-    const size = /\/(?:\d+x(?:\d+)?(?:_[^/]+)?|originals)\//;
-    return [...new Set(['originals', '1200x', '736x'].map(value => src.replace(size, `/${value}/`)).concat(src))];
+    return [...new Set(['1200x', '736x', 'originals'].map(value => src.replace(size, `/${value}/`)).concat(src))];
+  }
+  function sharpen() {
+    const pin = pins[index];
+    if (upgrade || !pin || photo.hidden || zoom <= 1.01 || !size.test(pin.src)) return;
+    if (photo.naturalWidth >= baseWidth * zoom * devicePixelRatio) return;
+    const original = pin.src.replace(size, '/originals/');
+    if (photo.currentSrc === original) return;
+    const image = upgrade = new Image();
+    image.onload = () => {
+      // Ignore results for a pin the viewer has already left.
+      if (upgrade !== image || image.naturalWidth <= photo.naturalWidth) return;
+      keepView = true; photo.src = original;
+    };
+    image.src = original;
   }
   function externalUrl(value) {
     try {
@@ -308,8 +332,9 @@
       const rect = img.getBoundingClientRect();
       return rect.width >= 100 && rect.height >= 100;
     });
-    eligible.sort((a, b) => (b.getBoundingClientRect().width * b.getBoundingClientRect().height) - (a.getBoundingClientRect().width * a.getBoundingClientRect().height));
-    const img = eligible[0];
+    // Measure once instead of forcing layout reads inside every comparison.
+    const area = img => { const rect = img.getBoundingClientRect(); return rect.width * rect.height; };
+    const img = eligible.map(img => [area(img), img]).sort((a, b) => b[0] - a[0])[0]?.[1];
     // Metadata fallback is allowed only when it belongs to this exact page,
     // since Pinterest can retain stale meta tags during client-side navigation.
     const metaUrl = document.querySelector('meta[property="og:url"]')?.content;
@@ -341,7 +366,7 @@
       seen.add(match[1]);
       const card = anchor.closest('[data-test-id="pin"],[data-test-id="pinWrapper"],[data-grid-item]');
       const sourceAnchor = card?.querySelector('a[data-test-id="pin-link"],a[data-test-id="visit-site-button"]');
-      pins.push({ id: match[1], src, title: img.alt || 'Reference image', url: anchor.href,
+      pins.push({ id: match[1], src, title: img.alt || 'Reference image', url: `${location.origin}/pin/${match[1]}/`,
         description: card?.querySelector('[data-test-id="pin-description"]')?.textContent || '', source: externalUrl(sourceAnchor?.href) });
     }
   }
@@ -361,6 +386,7 @@
     $('.minus').disabled = zoom <= 1;
     $('.plus').disabled = !baseWidth || zoom >= 32;
     $('.fit').disabled = $('.width').disabled = !baseWidth;
+    sharpen();
   }
   function fit() {
     if (photo.hidden || !photo.naturalWidth) return;
@@ -402,13 +428,19 @@
     $('.message').textContent = 'Loading image…';
     photo.alt = pin.title;
     imageCandidates = sources(pin.src);
-    candidateIndex = 0;
+    candidateIndex = 0; upgrade = null; keepView = false;
     photo.src = imageCandidates[0];
     const next = pins[index + 1];
     if (next) { const preload = new Image(); preload.src = sources(next.src)[0]; }
   }
-  photo.onload = () => { photo.hidden = false; fit(); updateInfo(); $('.message').textContent = ''; };
+  photo.onload = () => {
+    photo.hidden = false;
+    // A sharper copy replaces the preview without resetting the user's zoom.
+    if (keepView) keepView = false; else fit();
+    updateInfo(); $('.message').textContent = '';
+  };
   photo.onerror = () => {
+    keepView = false;
     if (candidateIndex + 1 < imageCandidates.length) {
       photo.src = imageCandidates[++candidateIndex];
       return;
@@ -450,6 +482,7 @@
     scrollPosition = { left: scrollX, top: scrollY };
     viewer.classList.remove('keyboard-focus');
     opened = true; session++; loading = false;
+    loadCollections();
     viewer.hidden = false; $('.launch').hidden = true;
     render(); $('.close').focus();
   }
@@ -548,7 +581,7 @@
     } else { panX -= e.deltaX; panY -= e.deltaY; paint(); }
   }, { passive: false });
   viewer.addEventListener('wheel', e => { if (!e.target.closest('.library-panel,.info-panel')) e.preventDefault(); }, { passive: false });
-  if (standalone) { open(); collectionsReady.then(showLibrary); }
+  if (standalone) { open(); loadCollections().then(showLibrary); }
   chrome.runtime.onMessage.addListener((message, sender, respond) => {
     if (message.type === 'PINTEREST_SLIDER_OPEN') { open(); respond({ ok: true }); }
   });

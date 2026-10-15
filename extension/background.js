@@ -52,7 +52,11 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       }
       default: throw new Error('Unknown action.');
     }
-    await chrome.storage.local.set({ [KEY]: collections });
+    try { await chrome.storage.local.set({ [KEY]: collections }); }
+    catch (error) {
+      if (/quota/i.test(error.message)) throw new Error('Storage is full. Remove some references or collections, then try again.');
+      throw error;
+    }
     return { collections };
   };
   // Serialize edits from different tabs to prevent lost saves.

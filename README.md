@@ -16,7 +16,7 @@ Browse references without repeatedly opening and closing pins. Zoom into small d
 - Pan enlarged images; use **Fit to width** for long screenshots and infographics.
 - Create, search, rename and revisit local reference collections.
 - View descriptions, image dimensions and external source links when available.
-- Original-image requests with fallback to available Pinterest resolutions.
+- Screen-sized images by default; original resolution loads automatically when you zoom in.
 - Circular Lucide controls, keyboard focus and reduced-motion support.
 
 ## Install locally

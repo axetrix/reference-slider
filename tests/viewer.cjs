@@ -8,7 +8,8 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     await page.route('https://i.pinimg.com/**', route => {
       if (route.request().url().endsWith('/1.jpg') && !route.request().url().includes('/236x/')) return route.fulfill({ status: 404, body: '' });
-      return route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="4000"><rect width="800" height="4000" fill="teal"/></svg>' });
+      const [width, height] = route.request().url().includes('/originals/') ? [1600, 8000] : [800, 4000];
+      return route.fulfill({ contentType: 'image/svg+xml', body: `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="${width}" height="${height}" fill="teal"/></svg>` });
     });
     await page.route('https://www.pinterest.com/pin/*/', route => route.fulfill({ contentType: 'text/html', body: '<script type="application/json">{"pin":{"id":"4","title":"Kitchen reference","description":"Materials and colors","link":"https://example.com/design","images":{}}}</script>' }));
     await page.route('https://www.pinterest.com/', route => route.fulfill({ contentType: 'text/html', body: '<html><body></body></html>' }));
@@ -24,7 +25,7 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
             sendMessage(message) { return new Promise(resolve => handler(message, {}, resolve)); }
           },
           storage: {
-            local: { async get(key) { return structuredClone(window.testStore); }, async set(value) { Object.assign(window.testStore, structuredClone(value)); } },
+            local: { async get(key) { window.storageReads = (window.storageReads || 0) + 1; return structuredClone(window.testStore); }, async set(value) { Object.assign(window.testStore, structuredClone(value)); } },
             onChanged: { addListener() {} }
           }
         };
@@ -35,9 +36,12 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     await page.addScriptTag({ path: path.resolve(__dirname, '../extension/content.js') });
     assert.equal(await page.locator('.brand').textContent(), 'Reference Slider');
     assert.equal(await page.locator('.viewer').getAttribute('aria-label'), 'Reference Slider image viewer');
+    // Collections stay unloaded until the viewer is opened.
+    assert.equal(await page.evaluate(() => window.storageReads || 0), 0);
     await page.locator('.launch:not(.launch-library)').click();
     await page.locator('header .count').waitFor();
     assert.equal(await page.locator('header .count').textContent(), '1 / 3');
+    await page.waitForFunction(() => window.storageReads === 1);
     assert.equal(await page.locator('.close').evaluate(el => getComputedStyle(el).outlineStyle), 'none');
     await page.locator('.photo').waitFor({ state: 'visible' });
     assert.equal(await page.locator('.photo').getAttribute('src'), 'https://i.pinimg.com/236x/1.jpg');
@@ -49,8 +53,14 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     await page.keyboard.press('ArrowLeft');
     assert.equal(await page.locator('header .count').textContent(), '2 / 3');
     await page.locator('.photo').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('.photo').getAttribute('src'), 'https://i.pinimg.com/1200x/2.jpg');
     await page.locator('.width').click();
-    assert.ok(parseInt(await page.locator('.zoom-value').textContent()) > 100);
+    const widthZoom = await page.locator('.zoom-value').textContent();
+    assert.ok(parseInt(widthZoom) > 100);
+    // Zooming past the preview's pixels swaps in the original without resetting the view.
+    await page.waitForFunction(() => document.getElementById('pinterest-slider-root').shadowRoot.querySelector('.photo').naturalWidth === 1600);
+    assert.equal(await page.locator('.photo').getAttribute('src'), 'https://i.pinimg.com/originals/2.jpg');
+    assert.equal(await page.locator('.zoom-value').textContent(), widthZoom);
     const before = await page.locator('.photo').getAttribute('style');
     await page.mouse.move(640, 400); await page.mouse.wheel(0, 400);
     await page.waitForTimeout(100);
@@ -216,6 +226,6 @@ const artifact = name => path.join(require('node:os').tmpdir(), name);
     await popup.locator('#open').click();
     assert.match(await popup.locator('#status').textContent(), /Open a supported website/);
     await popup.close();
-    console.log('PASS: custom keyboard menu, mobile menu bounds, collection search, responsive 320/390px controls, keyboard Space activation, slow press feedback, reduced motion, open pin detail priority, single English launcher, button shape, persistent task collections, duplicate prevention, saved-only viewer, remove, concurrent saves, zoom, pan, long image scrolling, pinch, quality fallback, collection, keyboard, mouse swipe, close, focus trap, feed pagination, empty state');
+    console.log('PASS: lazy collection loading, screen-sized preview with original on zoom, custom keyboard menu, mobile menu bounds, collection search, responsive 320/390px controls, keyboard Space activation, slow press feedback, reduced motion, open pin detail priority, single English launcher, button shape, persistent task collections, duplicate prevention, saved-only viewer, remove, concurrent saves, zoom, pan, long image scrolling, pinch, quality fallback, collection, keyboard, mouse swipe, close, focus trap, feed pagination, empty state');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
