@@ -1,0 +1,50 @@
+Reference Slider security and reliability review — October 15, 2026
+Reviewed baseline: 20b988c. Release containing fixes: 1.2.4.
+
+Scope: content script, background worker, popup, manifest permissions, collection
+storage, pin metadata parsing, image loading, dependency lockfile, release and CI.
+
+Confirmed and fixed
+1. Save selected pins before waiting for collections: navigation during a delayed
+   storage read previously saved the next image instead of the clicked image.
+2. Cancel image requests on render and close, including empty collections. A late
+   original-image response could retain/reintroduce an old image after removal.
+3. Coalesce repeated Image details requests; cancel on leaving the panel, changing
+   images or closing the viewer. Bound requests to 15 seconds and 5 MiB decoded
+   response data, with one 50,000-object traversal budget per response.
+4. Use the existing source thumbnail before trying the original if resized preview
+   URLs fail. Track and clear the adjacent-image preloader on navigation/close.
+5. Handle active-tab query failures in the popup rather than an unhandled rejection.
+6. Reject source links containing embedded username/password credentials.
+7. npm audit identified a high-severity build-time sharp vulnerability:
+   GHSA-wq5f-xc86-pv6w (librsvg, sharp <0.35.5). Updated sharp 0.35.4 to 0.35.5.
+   This dependency is used to build images and is not included in the extension.
+8. CI now installs locked dependencies and runs browser regression tests, rather
+   than syntax/package checks alone.
+
+Security observations
+- Untrusted names/descriptions are assigned via textContent, not evaluated HTML.
+- innerHTML is used for bundled static UI/icon markup.
+- External source links accept HTTP(S) only and use noopener/noreferrer.
+- Saved image URLs are constrained to HTTPS i.pinimg.com; pin IDs are digits.
+- Metadata JSON is parsed as data; no eval, Function constructor or remote script
+  loader was found in the extension source.
+- Permissions remain storage plus the configured Pinterest host matches.
+- No analytics or developer upload endpoint was found in extension source.
+
+Verification
+- Three targeted regressions failed on the baseline, then passed after fixes:
+  delayed save/navigation, late original after empty collection, duplicate info.
+- Existing viewer suite passed: lazy storage, zoom originals, focus/menu keyboard,
+  320/390px layouts, collections, parallel saves, gestures, fallback and pagination.
+- Seven regression cases passed: above scenarios plus oversized metadata, thumbnail
+  fallback/request cleanup, unsafe image URL/quota recovery, rejected tab query.
+- npm audit after dependency update: zero reported vulnerabilities.
+- Syntax checks, package checks, release build and git diff --check passed.
+
+Limits
+Browser tests use mocked Pinterest pages and Chrome storage/runtime APIs. Live
+Pinterest under a signed-in account and the installed Chrome Web Store build were
+not exercised. This review is not proof of absence of vulnerabilities. The new
+metadata size/time limits intentionally fail gracefully on oversized/slow pages;
+users can still open the original pin. Existing storage keys were preserved.

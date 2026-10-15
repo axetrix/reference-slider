@@ -1,6 +1,7 @@
 document.querySelector('#open').addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) throw new Error('No active tab.');
     await chrome.tabs.sendMessage(tab.id, { type: 'PINTEREST_SLIDER_OPEN' });
     window.close();
   } catch {

@@ -125,6 +125,7 @@
     if (!e.composedPath().includes($('.picker'))) closeCollectionMenu();
   }, true);
   function showLibrary() {
+    cancelMetadata();
     closeCollectionMenu();
     $('.info-panel').hidden = true;
     $('.library-panel').hidden = false;
@@ -188,10 +189,17 @@
     finally { button.disabled = false; }
   };
   $('.save').onclick = async () => {
-    await loadCollections();
-    if (!selectedCollection) { showLibrary(); return; }
+    // Capture the user's choice before storage/network work yields to navigation.
+    const pin = pins[index], collectionId = selectedCollection;
+    if (busy || !pin) return;
     busy = true; updateCollectionControls();
-    try { await collectionAction('save', { id: selectedCollection, pin: pins[index] }); }
+    try {
+      await loadCollections();
+      if (storageError) throw new Error(storageError);
+      const id = collectionId || selectedCollection;
+      if (!id) { showLibrary(); return; }
+      await collectionAction('save', { id, pin });
+    }
     catch (error) { storageError = error.message; showLibrary(); }
     finally { busy = false; updateCollectionControls(); }
   };
@@ -228,12 +236,19 @@
     }
     updateCollectionControls(); if (!$('.library-panel').hidden) renderLibrary();
   }
-  let imageCandidates = [], candidateIndex = 0, upgrade = null, keepView = false;
+  let imageCandidates = [], candidateIndex = 0, upgrade = null, preload = null, keepView = false;
+  function clearImageRequests() {
+    for (const image of [upgrade, preload]) {
+      if (image) { image.onload = image.onerror = null; image.removeAttribute('src'); }
+    }
+    upgrade = preload = null; keepView = false; imageCandidates = []; candidateIndex = 0;
+    photo.hidden = true; photo.removeAttribute('src');
+  }
   const size = /\/(?:\d+x(?:\d+)?(?:_[^/]+)?|originals)\//;
   // Start with a screen-sized copy: originals can decode to 100+ MB each,
   // so they are requested only once zooming needs more pixels (see sharpen).
   function sources(src) {
-    return [...new Set(['1200x', '736x', 'originals'].map(value => src.replace(size, `/${value}/`)).concat(src))];
+    return [...new Set(['1200x', '736x'].map(value => src.replace(size, `/${value}/`)).concat(src, src.replace(size, '/originals/')))];
   }
   function sharpen() {
     const pin = pins[index];
@@ -244,7 +259,7 @@
     const image = upgrade = new Image();
     image.onload = () => {
       // Ignore results for a pin the viewer has already left.
-      if (upgrade !== image || image.naturalWidth <= photo.naturalWidth) return;
+      if (upgrade !== image || !opened || pins[index] !== pin || image.naturalWidth <= photo.naturalWidth) return;
       keepView = true; photo.src = original;
     };
     image.src = original;
@@ -252,7 +267,7 @@
   function externalUrl(value) {
     try {
       const url = new URL(value);
-      if (!['http:', 'https:'].includes(url.protocol) || /(^|\.)(pinterest\.[a-z.]+|pinimg\.com)$/.test(url.hostname)) return '';
+      if (url.username || url.password || !['http:', 'https:'].includes(url.protocol) || /(^|\.)(pinterest\.[a-z.]+|pinimg\.com)$/.test(url.hostname)) return '';
       return url.href;
     } catch { return ''; }
   }
@@ -272,27 +287,51 @@
     } else $('.info-source').removeAttribute('href');
     $('.info-status').textContent = source ? '' : (pin.metadataLoaded ? 'No external link is listed for this pin.' : 'Loading image details…');
   }
+  let metadataRequest = null;
+  function cancelMetadata() {
+    metadataRequest?.controller.abort(); metadataRequest = null;
+  }
+  async function boundedHtml(response) {
+    const limit = 5 * 1024 * 1024;
+    if (Number(response.headers.get('content-length')) > limit) throw new Error('Pin page is too large.');
+    const reader = response.body.getReader(), decoder = new TextDecoder();
+    let bytes = 0, text = '';
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) return text + decoder.decode();
+        bytes += value.byteLength;
+        if (bytes > limit) throw new Error('Pin page is too large.');
+        text += decoder.decode(value, { stream: true });
+      }
+    } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
+  }
   async function showInfo() {
     const pin = pins[index]; if (!pin) return;
     closeCollectionMenu();
     $('.info-panel').hidden = false; updateInfo(); $('.info-close').focus();
-    if (pin.metadataLoaded || pin.source) return;
+    if (pin.metadataLoaded || pin.source || metadataRequest?.pin === pin) return;
+    cancelMetadata();
+    const request = metadataRequest = { pin, controller: new AbortController() };
+    const timeout = setTimeout(() => request.controller.abort(), 15000);
     try {
-      const response = await fetch(new URL(`/pin/${pin.id}/`, standalone ? 'https://www.pinterest.com' : location.origin), { credentials: 'same-origin' });
+      const response = await fetch(new URL(`/pin/${pin.id}/`, standalone ? 'https://www.pinterest.com' : location.origin), { credentials: 'same-origin', signal: request.controller.signal });
       if (!response.ok) throw new Error('This pin is unavailable.');
-      const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
-      let data;
+      const html = await boundedHtml(response);
+      if (metadataRequest !== request) return;
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      let data, visited = 0;
       // Pinterest embeds pin metadata in JSON. Only accept an object for this exact pin.
       for (const script of doc.querySelectorAll('script[type="application/json"]')) {
         let parsed; try { parsed = JSON.parse(script.textContent); } catch { continue; }
-        const pending = [parsed]; let visited = 0;
+        const pending = [parsed];
         while (pending.length && visited++ < 50000) {
           const value = pending.pop();
           if (!value || typeof value !== 'object') continue;
           if (String(value.id) === pin.id && ('description' in value || 'link' in value || 'images' in value)) { data = value; break; }
           for (const child of Object.values(value)) if (child && typeof child === 'object') pending.push(child);
         }
-        if (data) break;
+        if (data || visited >= 50000) break;
       }
       if (data) {
         pin.title = String(data.title || data.grid_title || pin.title);
@@ -312,11 +351,14 @@
         await collectionAction('metadata', { pin });
       }
     } catch {
-      if (pins[index] === pin) $('.info-status').textContent = 'Could not load the source. Open the original pin to check its link.';
+      if (metadataRequest === request && pins[index] === pin) $('.info-status').textContent = 'Could not load the source. Open the original pin to check its link.';
+    } finally {
+      clearTimeout(timeout); request.controller.abort();
+      if (metadataRequest === request) metadataRequest = null;
     }
   }
   $('.info-open').onclick = showInfo;
-  $('.info-close').onclick = () => { $('.info-panel').hidden = true; $('.info-open').focus(); };
+  $('.info-close').onclick = () => { cancelMetadata(); $('.info-panel').hidden = true; $('.info-open').focus(); };
   function currentPagePin() {
     const match = location.pathname.match(/^\/pin\/(\d+)\/?$/);
     if (!match) return null;
@@ -411,6 +453,7 @@
   };
   new ResizeObserver(() => { if (opened && !photo.hidden) fit(); }).observe(stage);
   function render() {
+    cancelMetadata(); clearImageRequests();
     $('.info-panel').hidden = true;
     pointers.clear(); gesture = null; stage.classList.remove('dragging');
     zoom = 1; panX = panY = 0; baseWidth = baseHeight = 0; paint();
@@ -431,15 +474,17 @@
     candidateIndex = 0; upgrade = null; keepView = false;
     photo.src = imageCandidates[0];
     const next = pins[index + 1];
-    if (next) { const preload = new Image(); preload.src = sources(next.src)[0]; }
+    if (next) { preload = new Image(); preload.src = sources(next.src)[0]; }
   }
   photo.onload = () => {
+    if (!opened || !pins[index] || !photo.getAttribute('src')) return;
     photo.hidden = false;
     // A sharper copy replaces the preview without resetting the user's zoom.
     if (keepView) keepView = false; else fit();
     updateInfo(); $('.message').textContent = '';
   };
   photo.onerror = () => {
+    if (!opened || !pins[index] || !photo.getAttribute('src')) return;
     keepView = false;
     if (candidateIndex + 1 < imageCandidates.length) {
       photo.src = imageCandidates[++candidateIndex];
@@ -487,6 +532,7 @@
     render(); $('.close').focus();
   }
   function close() {
+    cancelMetadata(); clearImageRequests();
     closeCollectionMenu();
     opened = false; session++; loading = false; pointers.clear(); gesture = null; stage.classList.remove('dragging');
     viewer.hidden = true; $('.launch').hidden = false; $('.library-panel').hidden = true;

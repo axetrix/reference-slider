@@ -10,5 +10,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
+      - run: npm test
+        env:
+          SLIDER_BROWSER_CHANNEL: chromium
       - run: node scripts/verify-package.cjs
